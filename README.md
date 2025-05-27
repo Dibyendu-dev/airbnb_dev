@@ -8,7 +8,7 @@ This is a microservices-based platform for Airbnb-like functionality, built usin
 airbnb/
 ├── HotelService/     # Hotel management service
 │   ├── src/         # Source code
-│   ├── prisma/      # Database schema and migrations
+│   ├── sequelize/      # Database schema and migrations
 │   └── ...
 ├── BookingService/  # Booking management service
 │   ├── src/         # Source code
