@@ -5,7 +5,9 @@ import v2Router from './routers/v2/index.router';
 import { appErrorHandler, genericErrorHandler } from './middlewares/error.middleware';
 import logger from './config/logger.config';
 import { attachCorrelationIdMiddleware } from './middlewares/correlation.middleware';
-import { addEmailToQueue } from './producers/emailproducers';
+import { setupMailerWorker } from './consumers/email.consumer';
+import { NotificationDto } from './dto/notification.dto';
+import { addEmailToQueue } from './producers/email.producers';
 const app = express();
 
 app.use(express.json());
@@ -30,16 +32,16 @@ app.use(genericErrorHandler);
 app.listen(serverConfig.PORT, () => {
     logger.info(`Server is running on http://localhost:${serverConfig.PORT}`);
     logger.info(`Press Ctrl+C to stop the server.`);
-
-//    for(let i=0; i<10; i++){
-//      addEmailToQueue({
-//         to:`sample Booking ${i}`,
-//         subject:"sample email booking",
-//         templete:"sample templete booking",
-//         params:{
-//             name:"dibyendu das",
-//             orderId:"12345"
-//         }
-//     })
-//    }
+    setupMailerWorker()
+    logger.info("mailer worker set up completed");
+    const sampleNotification:NotificationDto={
+        to:"sample",
+        subject:"sample email",
+        templete:"sample templete",
+        params:{
+            name:"dibyendu das",
+            orderId:"12345"
+        }
+    }
+    addEmailToQueue(sampleNotification)
 });
