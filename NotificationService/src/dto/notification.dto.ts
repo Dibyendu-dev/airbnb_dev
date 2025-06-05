@@ -1,6 +1,6 @@
 export interface NotificationDto {
     to: string;
     subject:string;
-    templete:string;
+    templateId:string;
     params:Record<string,any>;
 }
