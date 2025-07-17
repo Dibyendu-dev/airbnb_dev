@@ -7,13 +7,9 @@ import (
 
 func main() {
 	fmt.Println("hello world")
-	cfg := app.Config{
-		Addr: ":3000",
-	}
+	cfg := app.NewConfig(":3000")
 
-	app := app.Application{
-		Config:  cfg,
-	}
+	app := app.NewApplication(cfg)
 
 	app.Run()
 }
