@@ -2,11 +2,11 @@ package main
 
 import (
 	"AuthInGo/app"
-	"fmt"
+	config "AuthInGo/config/env"
 )
 
 func main() {
-	fmt.Println("hello world")
+	config.Load()
 	cfg := app.NewConfig()
 
 	app := app.NewApplication(cfg)
