@@ -39,6 +39,9 @@ func (u *UserRepositoryImpl) DeleteById(id int64) error{
 	return nil
 }
 
+//  goose -dir "db/migrations" mysql "root:ddas4548@tcp(127.0.0.1:3306)/auth_dev" up
+//  goose -dir "db/migrations" create create_user_table sql
+
 func (u *UserRepositoryImpl) Create() (error){
 	fmt.Println("creating user in user repository")
 
