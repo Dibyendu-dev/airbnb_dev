@@ -11,6 +11,7 @@ type UserRepository interface { // facilitates dependency injection for reposito
 	Create(username , email , hashedPassword string) (error)
 	GetAll() ([]*models.User,error)
 	DeleteById(id int64) (error)
+	GetUserByEmail(email string) (*models.User,error)
 }
 
 type UserRepositoryImpl struct {
@@ -116,4 +117,25 @@ func (u *UserRepositoryImpl) GetById() (*models.User,error) {
 	fmt.Println("user fetched successfully",user)
 
 	return user ,nil
+}
+
+func (u *UserRepositoryImpl) GetUserByEmail( email string) (*models.User,error){
+	fmt.Println("get user by email in repo layer")
+	
+	query := "select id ,email , password from users where email = ?"
+	row := u.db.QueryRow(query,email)
+
+	user := &models.User{}  // reference obj.
+
+	err := row.Scan(&user.Id,&user.Email,&user.Password) //password is hashed
+	if err!= nil{
+		if err == sql.ErrNoRows{
+			fmt.Println("No user found with given email")
+			return nil,err
+		}else {
+			fmt.Println("error scanning user",err)
+			return nil, err
+		}
+	}
+	return  user,nil
 }
