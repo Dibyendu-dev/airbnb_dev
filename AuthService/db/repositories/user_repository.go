@@ -8,7 +8,7 @@ import (
 
 type UserRepository interface { // facilitates dependency injection for repository
 	GetById() (*models.User,error)
-	Create() (error)
+	Create(username , email , hashedPassword string) (error)
 	GetAll() ([]*models.User,error)
 	DeleteById(id int64) (error)
 }
@@ -25,7 +25,14 @@ func NewUserRepository(_db *sql.DB) UserRepository{
 
 func (u *UserRepositoryImpl) GetAll() ([]*models.User,error){
 
-	// TODO:
+	query := "select id,username,email,created_at,updated_at from users"
+
+	rows,err :=u.db.Query(query)
+	if err != nil{
+		fmt.Println("error fetching user",err)
+		return  nil,err
+	}
+	defer rows.Close() // ensure rows are closed after processing
 
 
 	return nil,nil
@@ -33,21 +40,34 @@ func (u *UserRepositoryImpl) GetAll() ([]*models.User,error){
 
 func (u *UserRepositoryImpl) DeleteById(id int64) error{
 
-	// TODO:
-
-
+	query := "delete from users where id = ?"
+	result , err :=u.db.Exec(query, id)
+	if err != nil{
+		fmt.Println("error deleting user",err)
+		return  err
+	}
+	 rowsAffected,rowErr := result.RowsAffected()
+	 if rowErr != nil{
+		fmt.Println("error getting rows affected",rowErr)
+		return  rowErr
+	 }
+	 if rowsAffected == 0{
+		fmt.Println("no rows affected , users not deleted")
+		return  nil
+	 }
+	 fmt.Println("user deleted successfully,rows affected:",rowsAffected)
 	return nil
 }
 
 //  goose -dir "db/migrations" mysql "root:ddas4548@tcp(127.0.0.1:3306)/auth_dev" up
 //  goose -dir "db/migrations" create create_user_table sql
 
-func (u *UserRepositoryImpl) Create() (error){
+func (u *UserRepositoryImpl) Create(username , email , hashedPassword string) (error){
 	fmt.Println("creating user in user repository")
 
 	query := "INSERT INTO users (username , email , password) VALUES (? , ? , ?)"
 
-	result , err :=u.db.Exec(query, "test1234", "test@test.com", "test1234")
+	result , err :=u.db.Exec(query, username, email, hashedPassword)
 	
 	if err != nil{
 		fmt.Println("error inserting user",err)
@@ -82,7 +102,7 @@ func (u *UserRepositoryImpl) GetById() (*models.User,error) {
 	// step 3: process the result
 	user:= &models.User{}
 
-	err:=row.Scan(&user.Id, &user.Username, &user.Email,  &user.CreatedAt, &user.UpdatedAt)
+	err:=row.Scan(&user.Id, &user.Username, &user.Email, &user.CreatedAt, &user.UpdatedAt)
 
 	if err!= nil{
 		if err == sql.ErrNoRows{
