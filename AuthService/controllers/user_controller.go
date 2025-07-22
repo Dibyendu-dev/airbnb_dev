@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"AuthInGo/services"
+	"AuthInGo/utils"
 	"fmt"
 	"net/http"
 )
@@ -30,6 +31,18 @@ func (uc *UserController) CreateUser(w http.ResponseWriter, r *http.Request) {
 
 func (uc *UserController) LoginUser(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("login user by id called in UserController ")
-	uc.UserService.LoginUser()
-	w.Write([]byte("user fetching endpoint"))
+	jwtToken,err :=uc.UserService.LoginUser()
+	if err!=nil{
+		w.Write([]byte("something went wrong while log in"))
+		return
+	}
+	 response := map[string]any{
+		"message": "user logged in successfully",
+		"data": jwtToken,
+		"success": true,
+		"error":nil,
+	 }
+	 utils.WriteJsonResponse(w,http.StatusOK,response)
+
+	
 }
