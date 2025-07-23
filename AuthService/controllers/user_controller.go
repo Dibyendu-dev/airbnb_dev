@@ -31,32 +31,26 @@ func (uc *UserController) CreateUser(w http.ResponseWriter, r *http.Request) {
 }
 
 func (uc *UserController) LoginUser(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("login user by id called in UserController ")
+	
 	var payload dto.LoginUserRequestDTO
-	if jsonErr := utils.ReadJsonBody(r,&payload); jsonErr!= nil{
-		w.Write([]byte("something went wrong while loging in"))
+	if jsonErr := utils.ReadJsonBody(r, &payload); jsonErr != nil {
+				utils.WriteJsonErrorResponse(w,http.StatusBadRequest,"something went wrong while loggin in",jsonErr)
+
 		return
 	}
-	
+
 	// check validation
-	if validationErr := utils.Validator.Struct(payload); validationErr!= nil {
-		w.Write([]byte("invalid input data"))
+	if validationErr := utils.Validator.Struct(payload); validationErr != nil {
+		utils.WriteJsonErrorResponse(w,http.StatusBadRequest,"invalid input data ",validationErr)
 		return
 	}
 
-
-	jwtToken,err :=uc.UserService.LoginUser()
-	if err!=nil{
-		w.Write([]byte("something went wrong while loging in"))
+	jwtToken, err := uc.UserService.LoginUser(&payload)
+	if err != nil {
+		utils.WriteJsonErrorResponse(w,http.StatusInternalServerError,"failed to login user ",err)
 		return
 	}
-	 response := map[string]any{
-		"message": "user logged in successfully",
-		"data": jwtToken,
-		"success": true,
-		"error":nil,
-	 }
-	 utils.WriteJsonResponse(w,http.StatusOK,response)
 
-	
+	utils.WriteJsonSuccessResponse(w, http.StatusOK, "user logged in successfully", jwtToken)
+
 }

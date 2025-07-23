@@ -1,17 +1,19 @@
 package services
 
 import (
+	env "AuthInGo/config/env"
 	db "AuthInGo/db/repositories"
+	"AuthInGo/dto"
 	"AuthInGo/utils"
 	"fmt"
-	env "AuthInGo/config/env"
+
 	"github.com/golang-jwt/jwt/v5"
 )
 
 type UserService interface {
 	GetUserById() error
 	CreateUser() error
-	LoginUser()	(string,error)
+	LoginUser(payload *dto.LoginUserRequestDTO)	(string,error)
 	
 }
 
@@ -45,10 +47,10 @@ func (u *UserServiceImpl) CreateUser() error{
 	return nil
 }
 
-func (u *UserServiceImpl) LoginUser() (string,error){
+func (u *UserServiceImpl) LoginUser(payload *dto.LoginUserRequestDTO) (string,error){
 	
-	email:= "user2@test.com"
-	password := "hashuser2pass123"
+	email:= payload.Email
+	password := payload.Password
 
 	//step 1: make a repository call to get the user by email
 	user,err :=u.userRepository.GetUserByEmail(email)
@@ -71,11 +73,11 @@ func (u *UserServiceImpl) LoginUser() (string,error){
 	}
 
 	// step 4: if password match, sent jwt token
-	payload:= jwt.MapClaims{
+	jwtPayload:= jwt.MapClaims{
 		"email": user.Email,
 		"id":user.Id,
 	}
-	token:= jwt.NewWithClaims(jwt.SigningMethodHS256,payload) 
+	token:= jwt.NewWithClaims(jwt.SigningMethodHS256,jwtPayload) 
 	tokenString,err :=token.SignedString([]byte(env.GetString("JWT_SECRET","token")))
 	 if err!= nil{
 		fmt.Println("error signing token",err)
