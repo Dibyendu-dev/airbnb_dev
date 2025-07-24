@@ -14,6 +14,7 @@ type Router interface {
 func SetupRouter(UserRouter Router) *chi.Mux {
 	chirouter :=chi.NewRouter()
 	chirouter.Use(middleware.RequestLogger)
+	
 	//routes
 	chirouter.Get("/ping",controllers.PingHandler)
 	UserRouter.Regiter(chirouter)
