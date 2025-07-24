@@ -85,24 +85,24 @@ func (u *UserRepositoryImpl) Create(username, email, hashedPassword string) (*mo
 
 	if err != nil {
 		fmt.Println("error inserting user", err)
-		return nil,err
+		return nil, err
 	}
 
 	lastInsertId, rowErr := result.LastInsertId()
 
 	if rowErr != nil {
 		fmt.Println("error getting affecte rows", rowErr)
-		return nil,rowErr
+		return nil, rowErr
 	}
 
 	user := &models.User{
-		Id: lastInsertId,
+		Id:       lastInsertId,
 		Username: username,
-		Email: email,
+		Email:    email,
 	}
 
 	fmt.Println("Users created succesfully", user)
-	return user,nil
+	return user, nil
 }
 
 func (u *UserRepositoryImpl) GetUserById(id string) (*models.User, error) {
@@ -112,7 +112,7 @@ func (u *UserRepositoryImpl) GetUserById(id string) (*models.User, error) {
 	query := "SELECT id, username, email, created_at, updated_at FROM users WHERE id = ? "
 
 	// step 2: execute the query
-	row := u.db.QueryRow(query, 1)
+	row := u.db.QueryRow(query, id)
 
 	// step 3: process the result
 	user := &models.User{}

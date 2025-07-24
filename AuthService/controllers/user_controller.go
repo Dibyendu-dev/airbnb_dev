@@ -66,7 +66,7 @@ func (uc *UserController) CreateUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	utils.WriteJsonSuccessResponse(w, http.StatusCreated, "user logged in successfully", user)
+	utils.WriteJsonSuccessResponse(w, http.StatusCreated, "user created successfully", user)
 	fmt.Println("user created succesfully", user)
 
 }
@@ -84,6 +84,6 @@ func (uc *UserController) LoginUser(w http.ResponseWriter, r *http.Request) {
 	}
 
 	utils.WriteJsonSuccessResponse(w, http.StatusOK, "user logged in successfully", jwtToken)
-	fmt.Println("user logged in succesfully", jwtToken)
+	fmt.Println("user logged in succesfully, JWT Token:", jwtToken)
 
 }
