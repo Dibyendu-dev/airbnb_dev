@@ -1,16 +1,16 @@
 -- +goose Up
 -- +goose StatementBegin
-create Table users (
-id serial primary key,
-username varchar(255) not null,
-email varchar(255) not null,
-password varchar(255) not null,
-created_at timestamp not null default current_timestamp,
-updated_at  timestamp not null default current_timestamp
+CREATE TABLE users (
+ id SERIAL PRIMARY KEY,
+ username VARCHAR(255) NOT NULL,
+ email VARCHAR(255) NOT NULL,
+ password VARCHAR(255) NOT NULL,
+ created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+ updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 -- +goose StatementEnd
 
 -- +goose Down
 -- +goose StatementBegin
-drop table users;
+DROP TABLE users;
 -- +goose StatementEnd
