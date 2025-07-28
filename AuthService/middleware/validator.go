@@ -24,8 +24,6 @@ func UserLoginRequestValidator(next http.Handler) http.Handler {
 			return
 		}
 
-		
-
 		ctx := context.WithValue(r.Context(),"payload",payload) // create a new context with the payload
 
 		next.ServeHTTP(w, r.WithContext(ctx))

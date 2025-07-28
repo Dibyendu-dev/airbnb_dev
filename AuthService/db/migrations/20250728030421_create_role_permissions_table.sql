@@ -8,7 +8,6 @@ create table if not exists role_permissions (
     updated_at timestamp not null default current_timestamp on update current_timestamp, 
     foreign key (role_id) references roles(id) on delete cascade,
     foreign key (permission_id) references permissions(id) on delete cascade
-
 );
 -- +goose StatementEnd
 
