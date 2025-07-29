@@ -1,4 +1,6 @@
+
 package db
+
 
 import (
 	"AuthInGo/models"
@@ -23,18 +25,18 @@ type UserRoleRepositoryImpl struct {
 }
 
 func NewUserRoleRepository(_db *sql.DB) UserRoleRepository {
-	return &UserRepositoryImpl{
+	return &UserRoleRepositoryImpl{
 		db: _db,
 	}
 }
 
 func (u *UserRoleRepositoryImpl) GetUserRoles(userId int64) ([]*models.Role, error) {
 	query := `SELECT r.id, r.name, r.description, r.created_at, r.updated_at
-				FROM user_role ur
-				INNER JOIN roles r 
-				ON ur.role_id = r.id
-				WHERE ur.user_id = ?
-			`
+					   FROM user_roles ur
+					   INNER JOIN roles r 
+					   ON ur.role_id = r.id
+					   WHERE ur.user_id = ?
+			   `
 	rows, err := u.db.Query(query, userId)
 	if err != nil {
 		return nil, err
@@ -65,6 +67,7 @@ func (u *UserRoleRepositoryImpl) AssignRoleToUser(userId int64, roleId int64) er
 	}
 	return nil
 }
+
 
 func (u *UserRoleRepositoryImpl) RemoveRoleFromUser(userId int64, roleId int64) error {
 	query := "DELETE FROM user_roles WHERE user_id = ? AND role_id = ?"
@@ -106,6 +109,21 @@ func (u *UserRoleRepositoryImpl) GetUserPermissions(userId int64) ([]*models.Per
 
 }
 
+func (u *UserRoleRepositoryImpl) HasPermission(userId int64, permissionName string) (bool, error) {
+	   query := `
+			   SELECT COUNT(*) > 0
+			   FROM user_roles ur
+			   INNER JOIN role_permissions rp ON ur.role_id = rp.role_id
+			   INNER JOIN permissions p ON rp.permission_id = p.id
+			   WHERE ur.user_id = ? AND p.name = ?`
+	   var exists bool
+	   err := u.db.QueryRow(query, userId, permissionName).Scan(&exists)
+	   if err != nil {
+			   return false, err
+	   }
+	   return exists, nil
+}
+
 func (u *UserRoleRepositoryImpl) HasRole(userId int64, roleName string) (bool, error) {
 	query := `
 		SELECT COUNT(*) > 0
@@ -121,19 +139,20 @@ func (u *UserRoleRepositoryImpl) HasRole(userId int64, roleName string) (bool, e
 }
 
 func (u *UserRoleRepositoryImpl) HasAllRoles(userId int64, roleNames []string) (bool, error) {
-
 	if len(roleNames) == 0 {
 		return true, nil
 	}
-	query := `
-		SELECT COUNT(*) = ?
-		FROM user_roles ur
-		INNER JOIN roles r ON ur.role_id = r.id
-		WHERE ur.user_id = ? AND r.name IN (?)
-		GROUP BY ur.user_id`
+	placeholders := strings.Repeat("?,", len(roleNames))
+	placeholders = placeholders[:len(placeholders)-1]
+	query := fmt.Sprintf(`SELECT COUNT(DISTINCT r.name) = ? FROM user_roles ur INNER JOIN roles r ON ur.role_id = r.id WHERE ur.user_id = ? AND r.name IN (%s)`, placeholders)
 
-	roleNamesStr := strings.Join(roleNames, ",")
-	row := u.db.QueryRow(query, len(roleNames), userId, roleNamesStr)
+	args := make([]interface{}, 0, 2+len(roleNames))
+	args = append(args, len(roleNames), userId)
+	for _, roleName := range roleNames {
+		args = append(args, roleName)
+	}
+
+	row := u.db.QueryRow(query, args...)
 	var hasAllRoles bool
 	if err := row.Scan(&hasAllRoles); err != nil {
 		if err == sql.ErrNoRows {
