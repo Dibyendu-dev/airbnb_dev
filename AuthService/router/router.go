@@ -9,19 +9,19 @@ import (
 )
 
 type Router interface {
-	Regiter(r chi.Router)
+	Register(r chi.Router)
 }
 
 
-func SetupRouter(UserRouter Router) *chi.Mux {
+func SetupRouter(UserRouter Router, RoleRouter Router) *chi.Mux {
 	chirouter :=chi.NewRouter()
 	chirouter.Use(middleware.RequestLogger)
 	chirouter.Use(middleware.RateLimitMiddleware)
 	//routes
 	chirouter.Get("/ping",controllers.PingHandler)
 	chirouter.HandleFunc("/fakestoreservice/*",utils.ProxyToService("https://fakestore.api.in","/fakestoreservice"))
-	UserRouter.Regiter(chirouter)
-
+	UserRouter.Register(chirouter)
+	RoleRouter.Register(chirouter)
 	return  chirouter
 }
 
