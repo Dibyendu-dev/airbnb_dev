@@ -2,6 +2,8 @@ package middleware
 
 import (
 	env "AuthInGo/config/env"
+	dbConfig"AuthInGo/config/db"
+	repo "AuthInGo/db/repositories"
 	"context"
 	"fmt"
 	"net/http"
@@ -58,4 +60,73 @@ func JWTAuthMiddleware(next http.Handler) http.Handler {
 		next.ServeHTTP(w,r.WithContext(ctx))
 
 	})
+}
+
+func RequireAllRoles(roles ...string)func(http.Handler) http.Handler {
+
+	// function that can create a middleware for checking the above set of roles
+
+	return func(next http.Handler) http.Handler {
+		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+
+			userIdStr := r.Context().Value("userId").(string)
+			userId,err :=strconv.ParseInt(userIdStr,10,64)
+			if err!=nil {
+				http.Error(w, "invalid user id",http.StatusUnauthorized)
+				return 
+			}
+			dbconn,dbErr :=dbConfig.SetupDB()
+			if dbErr != nil{
+				http.Error(w, "Database connection error:" +dbErr.Error(), http.StatusInternalServerError)
+				return 
+			}
+			 urr:= repo.NewUserRoleRepository(dbconn)
+			hasAllRoles, hasAllRolesErr := urr.HasAllRoles(userId,roles)
+			fmt.Println("userid",userId,"roles",roles,"hasAllRoles",hasAllRoles)
+			if hasAllRolesErr != nil {
+				http.Error(w, "Error checking user roles: "+hasAllRolesErr.Error(), http.StatusInternalServerError)
+				return
+			}
+			if !hasAllRoles{
+				http.Error(w, "Forbidden: You do not have the required roles", http.StatusForbidden)
+				return
+			}
+			fmt.Println("User has all required roles:", roles)
+			next.ServeHTTP(w,r)
+		})
+	}
+}
+
+func RequireAnyRoles(roles ...string)func(http.Handler) http.Handler {
+
+	
+	return func(next http.Handler) http.Handler {
+		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+
+			userIdStr := r.Context().Value("userId").(string)
+			userId,err :=strconv.ParseInt(userIdStr,10,64)
+			if err!=nil {
+				http.Error(w, "invalid user id",http.StatusUnauthorized)
+				return 
+			}
+			dbconn,dbErr :=dbConfig.SetupDB()
+			if dbErr != nil{
+				http.Error(w, "Database connection error:" +dbErr.Error(), http.StatusInternalServerError)
+				return 
+			}
+			 urr:= repo.NewUserRoleRepository(dbconn)
+			hasAnyRoles, hasAnyRolesErr := urr.HasAnyRole(userId,roles)
+			fmt.Println("userid",userId,"roles",roles,"hasAnyRoles",hasAnyRoles)
+			if hasAnyRolesErr != nil {
+				http.Error(w, "Error checking user roles: "+hasAnyRolesErr.Error(), http.StatusInternalServerError)
+				return
+			}
+			if !hasAnyRoles{
+				http.Error(w, "Forbidden: You do not have the required roles", http.StatusForbidden)
+				return
+			}
+			fmt.Println("User has all required roles:", roles)
+			next.ServeHTTP(w,r)
+		})
+	}
 }
