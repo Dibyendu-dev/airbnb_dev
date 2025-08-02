@@ -24,7 +24,7 @@ func UserLoginRequestValidator(next http.Handler) http.Handler {
 			return
 		}
 
-		ctx := context.WithValue(r.Context(),"payload",payload) // create a new context with the payload
+		ctx := context.WithValue(r.Context(), "payload",payload) // create a new context with the payload
 
 		next.ServeHTTP(w, r.WithContext(ctx))
 	})
@@ -48,7 +48,7 @@ func UserCreateRequestValidator(next http.Handler) http.Handler {
 		}
 		fmt.Println("payload recived for login:",payload)
 
-		ctx := context.WithValue(r.Context(),"payload",payload) // create a new context with the payload
+		ctx := context.WithValue(r.Context(), "payload",payload) // create a new context with the payload
 
 		next.ServeHTTP(w, r.WithContext(ctx))
 	})
@@ -70,7 +70,7 @@ func CreateRoleRequestValidator(next http.Handler) http.Handler{
 			return 
 		}
 
-		ctx := context.WithValue(r.Context(),"payload",payload)
+		ctx := context.WithValue(r.Context(), "payload",payload)
 		next.ServeHTTP(w, r.WithContext(ctx))
 	})
 }
@@ -92,7 +92,7 @@ func UpdateRoleRequestValidator(next http.Handler) http.Handler{
 			return 
 		}
 
-		ctx := context.WithValue(r.Context(),"payload",payload)
+		ctx := context.WithValue(r.Context(), "payload",payload)
 		next.ServeHTTP(w, r.WithContext(ctx))
 	})
 }
@@ -114,7 +114,7 @@ func AssignPermissionRequestValidator(next http.Handler) http.Handler{
 			return 
 		}
 
-		ctx := context.WithValue(r.Context(),"payload",payload)
+		ctx := context.WithValue(r.Context(), "payload",payload)
 		next.ServeHTTP(w, r.WithContext(ctx))
 	})
 }

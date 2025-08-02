@@ -80,7 +80,8 @@ func RequireAllRoles(roles ...string)func(http.Handler) http.Handler {
 				http.Error(w, "Database connection error:" +dbErr.Error(), http.StatusInternalServerError)
 				return 
 			}
-			 urr:= repo.NewUserRoleRepository(dbconn)
+			
+			urr:= repo.NewUserRoleRepository(dbconn)
 			hasAllRoles, hasAllRolesErr := urr.HasAllRoles(userId,roles)
 			fmt.Println("userid",userId,"roles",roles,"hasAllRoles",hasAllRoles)
 			if hasAllRolesErr != nil {
@@ -97,9 +98,8 @@ func RequireAllRoles(roles ...string)func(http.Handler) http.Handler {
 	}
 }
 
-func RequireAnyRoles(roles ...string)func(http.Handler) http.Handler {
+func RequireAnyRoles(roles ...string) func(http.Handler) http.Handler {
 
-	
 	return func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 
