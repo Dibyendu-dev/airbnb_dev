@@ -8,7 +8,7 @@ export async function generateRoomHandler(req:Request,res:Response){
     await addRoomGenerationJobQueue(req.body)
 
     res.status(StatusCodes.OK).json({
-        message: "Rooms generated successfully",
+        message: "Rooms generation job added to queue",
         success:true,
         data:{},
     })
