@@ -15,15 +15,15 @@ export async function generateRooms(jobData: RoomGenerationJob) {
   let totalDatesProcessed = 0;
 
   const roomCategory = await roomCategoryRepository.findById(
-    jobData.roomCategoryId
+    jobData.roomsCategoryId
   );
 
   if (!roomCategory) {
     logger.error(
-      `Room Category with id : ${jobData.roomCategoryId} is not found`
+      `Room Category with id : ${jobData.roomsCategoryId} is not found`
     );
     throw new NotFoundError(
-      `Room Category with id : ${jobData.roomCategoryId} is not found`
+      `Room Category with id : ${jobData.roomsCategoryId} is not found`
     );
   }
 
@@ -100,7 +100,7 @@ export async function processDateBatch(
     if (!exsistingRoom) {
       const roomPayload = {
         hotelId: roomCategory.hotelId,
-        roomCategoryId: roomCategory.id,
+        roomsCategoryId: roomCategory.id,
         dateOfAvailability: new Date(currentDate),
         price: priceOverride || roomCategory.price,
         createdAt: new Date(),

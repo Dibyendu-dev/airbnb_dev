@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 export const RoomGenerationRequestSchema = z.object({
-    roomCategoryId: z.number().positive(),
+    roomsCategoryId: z.number().positive(),
     startDate: z.string().datetime(),
     endDate: z.string().datetime(),
     scheduleType: z.enum(['immediate','scheduled']).default('immediate'),
@@ -10,7 +10,7 @@ export const RoomGenerationRequestSchema = z.object({
 });
 
 export const RoomGenerationJobSchema = z.object({
-    roomCategoryId: z.number().positive(),
+    roomsCategoryId: z.number().positive(),
     startDate: z.string().datetime(),
     endDate: z.string().datetime(),
     priceOverride: z.number().positive().optional(),

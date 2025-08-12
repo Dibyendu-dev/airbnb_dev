@@ -1,4 +1,4 @@
-import Redis from 'ioRedis';
+import Redis from 'ioredis';
 import { serverConfig } from '.';
 
 function connectToRedis(){

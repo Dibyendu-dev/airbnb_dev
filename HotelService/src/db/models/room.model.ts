@@ -6,7 +6,7 @@ import RoomCategory from "./roomCategory.model"
 class Room extends Model <InferAttributes<Room>,InferCreationAttributes<Room>>{
     declare id: CreationOptional<number>;
     declare hotelId: number;
-    declare  roomCategoryId: number;
+    declare  roomsCategoryId: number;
     declare dateOfAvailability: Date;
     declare price: number;
     declare createdAt: CreationOptional<Date>;
@@ -29,7 +29,7 @@ Room.init({
                 key: 'id',
                 },
              },
-     roomCategoryId: {
+     roomsCategoryId: {
         type: 'INTEGER',
         allowNull: false,
              references:{
