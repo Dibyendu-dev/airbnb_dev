@@ -12,6 +12,7 @@ import { attachCorrelationIdMiddleware } from "./middlewares/correlation.middlew
 
 import sequelize from "./db/models/sequelize";
 import { setupRoomGenerationWorker } from "./consumer/roomGeneration.consumer";
+import { startScheduler } from "./scheduler/roomScheduler";
 
 const app = express();
 
@@ -38,4 +39,7 @@ app.listen(serverConfig.PORT, async () => {
   await sequelize.authenticate();
   logger.info("Database connection has been established successfully.");
   setupRoomGenerationWorker()
+
+  startScheduler();
+  logger.info("room availibility scheduler initialized")
 });
