@@ -23,6 +23,7 @@ model Booking {
   createdAt         DateTime            @default(now())
   updatedAt         DateTime            @updatedAt
   bookingAmount     Int
+  roomsCategoryId   Int
   status            BooingStatus        @default(pending)
   totalGuests       Int
   idempotencyKey    IdempotencyKey?   
