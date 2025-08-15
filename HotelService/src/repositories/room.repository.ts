@@ -81,4 +81,12 @@ export class RoomRepository extends BaseRepository<Room> {
       },
     });
   }
+
+  async updateBookingIdToRooms(bookingId: number, roomsId: number[]){
+      return await this.model.update(
+        {bookingId},
+        {where: {id: { [Op.in] : roomsId}}}
+      )
+  }
+  
 }

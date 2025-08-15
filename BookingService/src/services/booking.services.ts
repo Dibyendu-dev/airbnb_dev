@@ -16,10 +16,29 @@ import { generateIdempotencyKey } from "../utils/generateIdempotencyKey";
 import prismaClient from "../prisma/client";
 import { redlock } from "../config/redis.config";
 import { serverConfig } from "../config";
+import { getAvailableRooms } from "../api/hotel.api";
 
 export async function createBookingService(createBookingDTO: CreateBookingDTO) {
   const ttl = serverConfig.LOCK_TTL;
   const bookingResource = `hotel:${createBookingDTO.hotelId}`;
+
+  // check the available rooms from hotel service
+
+  const availableRooms = await getAvailableRooms(
+    createBookingDTO.roomsCategoryId,
+    createBookingDTO.checkInDate,
+    createBookingDTO.checkOutDate
+  )
+
+  const checkInDate = new Date(createBookingDTO.checkInDate);
+  const checkOutDate = new Date(createBookingDTO.checkOutDate);
+
+  const totalNights = Math.ceil((checkOutDate.getTime() - checkInDate.getTime()) / (1000 * 60 * 60 * 24));
+
+  if(availableRooms.length === 0 || availableRooms.length < totalNights){
+    throw new BadRequestError("no rooms available for given dates")
+  }
+
 
   try {
     await redlock.acquire([bookingResource], ttl);
@@ -36,6 +55,8 @@ export async function createBookingService(createBookingDTO: CreateBookingDTO) {
     const idempotencyKey = generateIdempotencyKey();
 
     await createIdempotencyKey(idempotencyKey, booking.id);
+
+    // todo: update rooms
 
     return {
       bookingId: booking.id,

@@ -6,3 +6,8 @@ export const getAvailableRoomsSchema = z.object({
     checkOutDate: z.string({message: "Check-Out date must be present"}),
 
 })
+
+export const updateBookingIdToRoomsSchema = z.object({
+    bookingId:z.number({message: "Booking ID must be present"}),
+    roomIds: z.array(z.number({message: "Room IDs must be present"}))
+})
