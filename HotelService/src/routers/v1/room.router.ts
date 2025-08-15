@@ -3,7 +3,7 @@ import {
   getAvailableRoomsHandler,
   updateBookingIdToRoomsHandler,
 } from "../../controllers/room.controller";
-import { validateRequestBody } from "../../validators";
+import { validateQueryParams, validateRequestBody } from "../../validators";
 import {
   getAvailableRoomsSchema,
   updateBookingIdToRoomsSchema,
@@ -13,7 +13,7 @@ const roomRouter = express.Router();
 
 roomRouter.get(
   "/available",
-  validateRequestBody(getAvailableRoomsSchema),
+  validateQueryParams(getAvailableRoomsSchema),
   getAvailableRoomsHandler
 );
 roomRouter.post(

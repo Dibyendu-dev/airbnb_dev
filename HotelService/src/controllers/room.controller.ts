@@ -4,7 +4,11 @@ import { StatusCodes } from "http-status-codes";
 
 export async function getAvailableRoomsHandler(req:Request,res:Response, next: NextFunction) {
    
-    const rooms = await getAvailableRoomService(req.body);
+    const rooms = await getAvailableRoomService({
+        roomsCategoryId: Number(req.query.roomsCategoryId),
+        checkInDate: req.query.checkInDate as string,
+        checkOutDate: req.query.checkOutDate as string,
+    });
 
     res.status(StatusCodes.OK).json({
         message: "Room found successfully",

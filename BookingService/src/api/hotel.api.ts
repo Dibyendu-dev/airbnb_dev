@@ -17,3 +17,14 @@ export const getAvailableRooms = async (
 
     return response.data;
 };
+
+
+export const updateBookingIdToRooms = async (bookingId: number,roomIds: number[]) => {
+   
+    const response = await axios.post(`${serverConfig.HOTEL_SERVICE_URL}rooms/update-booking-id`,{
+        bookingId,
+        roomIds
+    })
+
+    return response.data;
+}
