@@ -5,7 +5,7 @@ import (
 	"database/sql"
 	"fmt"
 
-	"github.com/ydb-platform/ydb-go-sdk/v3/query"
+	
 )
 
 type ReviewRepository interface {
