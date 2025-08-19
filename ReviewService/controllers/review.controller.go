@@ -2,7 +2,7 @@ package controllers
 
 import (
 	"ReviewService/dto"
-	"ReviewService/sevices"
+	"ReviewService/services"
 	"ReviewService/utils"
 	"fmt"
 	"net/http"
@@ -11,10 +11,10 @@ import (
 )
 
 type ReviewController struct {
-	ReviewService sevices.ReviewService
+	ReviewService services.ReviewService
 }
 
-func NewReviewController(_reviewService sevices.ReviewService) *ReviewController {
+func NewReviewController(_reviewService services.ReviewService) *ReviewController {
 	return &ReviewController{
 		ReviewService: _reviewService,
 	}
@@ -68,7 +68,7 @@ func (rc *ReviewController) UpdateReview(w http.ResponseWriter, r *http.Request)
 
 	review,err := rc.ReviewService.UpdateReview(reviewId,&payload)
 	if err != nil{
-		utils.WriteJsonErrorResponse(w, http.StatusInternalServerError,"failed to create review",err)
+		utils.WriteJsonErrorResponse(w, http.StatusInternalServerError,"failed to update review",err)
 		return
 	}
 

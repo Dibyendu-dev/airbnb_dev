@@ -81,7 +81,7 @@ func (r *ReviewRepositoryImpl) GetById(id int64) (*models.Review,error){
 
 func (r *ReviewRepositoryImpl) Create(userId, bookingId, hotelId int64, comment string, rating int) (*models.Review, error) {
 
-	query := "INSERT INTO reviews (userId, bookingId, hotelId, comment, rating) VALUES (?,?,?,?,?) "
+	query := "INSERT INTO reviews (user_id, booking_id, hotel_id, comment, rating) VALUES (?,?,?,?,?) "
 	result ,err := r.db.Exec(query,userId, bookingId, hotelId, comment, rating)
 
 	if err != nil{
@@ -99,6 +99,7 @@ func (r *ReviewRepositoryImpl) Create(userId, bookingId, hotelId int64, comment 
 		Id: lastInsertedID,
 		UserId: userId,
 		BookingId: bookingId,
+		HotelId: hotelId,
 		Comment: comment,
 		Rating: rating,
 		IsSynced: false,
@@ -110,7 +111,7 @@ func (r *ReviewRepositoryImpl) Create(userId, bookingId, hotelId int64, comment 
 
 func (r *ReviewRepositoryImpl) Update(id int64, comment string, rating int) (*models.Review, error){
 
-	query:= "UPDATE reviews SET comment = ?, rating = ?,WHERE id = ? AND deleted_at IS NULL"
+	query:= "UPDATE reviews SET comment = ?, rating = ? WHERE id = ? AND deleted_at IS NULL"
 	result ,err := r.db.Exec(query,comment,rating,id)
 
 	if err != nil{

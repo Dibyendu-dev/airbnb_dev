@@ -39,7 +39,7 @@ func WriteJsonErrorResponse(w http.ResponseWriter, statusCode int, message strin
 	}
 
 	response := ErrorResponse{
-		Success: true,
+		Success: false,
 		Message: message,
 		Error: errorMessage,
 	}

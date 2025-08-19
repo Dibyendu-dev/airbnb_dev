@@ -3,6 +3,10 @@ package app
 import (
 	dbConfig "ReviewService/config/db"
 	config "ReviewService/config/env"
+	"ReviewService/controllers"
+	repo "ReviewService/db/repository"
+	"ReviewService/services"
+	"ReviewService/router"
 	"fmt"
 	"net/http"
 	"time"
@@ -31,15 +35,21 @@ func NewApplication(cfg Config) *Application {
 }
 
 func (app *Application) Run() error {
-	_, err := dbConfig.SetupDB()
+	db, err := dbConfig.SetupDB()
 
 	if err != nil {
 		fmt.Println("error setting up databse:", err)
 		return err
 	}
 
+	rr:= repo.NewReviewRepository(db)
+	rs:= services.NewReviewService(rr)
+	rc:= controllers.NewReviewController(rs)
+	rRouter:= router.NewReviewRouter(rc)
+
 	server := &http.Server{
 		Addr:         app.Config.Addr,
+		Handler:      router.SetUpRouter(rRouter),
 		ReadTimeout:  10 * time.Second, // Set read timeout to 10 seconds
 		WriteTimeout: 10 * time.Second, // Set write timeout to 10 seconds
 	}
