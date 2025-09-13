@@ -21,7 +21,7 @@ func (rr *RoleRouter) Register(r chi.Router) {
 	r.Get("/roles/{id}", rr.roleController.GetRoleById)
 	r.Get("/roles", rr.roleController.GetAllRoles)
 	r.With(middleware.CreateRoleRequestValidator).Post("/roles", rr.roleController.CreateRole)
-	r.With(middleware.UpdateRoleRequestValidator).Post("/roles", rr.roleController.UpdateRole)
+	r.With(middleware.UpdateRoleRequestValidator).Put("/roles/{id}", rr.roleController.UpdateRole)
 	r.Delete("/roles/{id}", rr.roleController.DeleteRole)
 
 	// role permission
@@ -29,5 +29,5 @@ func (rr *RoleRouter) Register(r chi.Router) {
 	r.Get("/role-permissions", rr.roleController.GetAllRolePermissions)
 	r.With(middleware.AssignPermissionRequestValidator).Post("/roles/{id}/permissions", rr.roleController.AssignPermissionToRole)
 	r.With(middleware.RemovePermissionRequestValidator).Post("/roles/{id}/permissions", rr.roleController.RemovePermissionFromRole)
-	r.With(middleware.JWTAuthMiddleware,middleware.RequireAllRoles("admin")).Post("/roles/{userId}/assign/{roleId}", rr.roleController.AssignRoleToUser)
+	r.With(middleware.JWTAuthMiddleware, middleware.RequireAllRoles("admin")).Post("/roles/{userId}/assign/{roleId}", rr.roleController.AssignRoleToUser)
 }

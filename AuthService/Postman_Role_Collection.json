@@ -1,0 +1,129 @@
+{
+	"info": {
+		"_postman_id": "role-auth-service-collection",
+		"name": "AuthService - Role Management APIs",
+		"description": "Complete collection of Role Management APIs for AuthService",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "1. Get All Roles",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/roles",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"roles"
+					]
+				},
+				"description": "Get all roles from the system"
+			},
+			"response": []
+		},
+		{
+			"name": "2. Get Role by ID",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/roles/{{role_id}}",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"roles",
+						"{{role_id}}"
+					]
+				},
+				"description": "Get a specific role by its ID"
+			},
+			"response": []
+		},
+		{
+			"name": "6. Get Role Permissions",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/roles/{{role_id}}/permissions",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"roles",
+						"{{role_id}}",
+						"permissions"
+					]
+				},
+				"description": "Get all permissions assigned to a specific role"
+			},
+			"response": []
+		},
+		{
+			"name": "7. Get All Role Permissions",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/role-permissions",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"role-permissions"
+					]
+				},
+				"description": "Get all role-permission mappings in the system"
+			},
+			"response": []
+		},
+		
+		
+	],
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://localhost:3001",
+			"description": "Base URL for AuthService"
+		},
+		{
+			"key": "role_id",
+			"value": "1",
+			"description": "Role ID for testing"
+		},
+		{
+			"key": "user_id",
+			"value": "1",
+			"description": "User ID for role assignment"
+		},
+		{
+			"key": "jwt_token",
+			"value": "your_jwt_token_here",
+			"description": "JWT token for authenticated requests"
+		}
+	]
+}
